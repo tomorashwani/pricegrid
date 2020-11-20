@@ -1,0 +1,19 @@
+/* Enter your custom styles here */
+div#container-pricegrid---master--masterPage-pageTitle-left-inner {
+    width: 100%;
+}
+.sapFDynamicPageTitleHeading-CTX.sapFDynamicPageTitleMainHeadingInner , .sapFDynamicPageTitleMainHeading{
+    width: 100%;
+}
+#container-pricegrid---master--list{
+	/*height:500px;*/
+	height: 100%;
+	overflow:auto;
+}
+.checkboxCls .sapMCbBg{
+	top: 0rem !important;
+}
+
+/*.sapUiInvisibleText, .sapUiHiddenPlaceholder { 
+	display: block !important;
+}*/

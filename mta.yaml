@@ -1,0 +1,72 @@
+ID: PriceGrid_MTA
+_schema-version: '2.1'
+description: Mohawk PriceGrid MTA App
+parameters:
+  deploy_mode: html5-repo
+version: 0.0.1
+modules:
+  - name: pricegrid-mta-approuter
+    type: approuter.nodejs
+    path: pricegrid-mta-approuter
+    parameters:
+      disk-quota: 512M
+      memory: 512M
+    requires:
+      - name: PriceGrid_MTA_html5_repo_runtime
+      - name: uaa_Mohawk_MTA
+      - name: dest_Mohawk_MTA
+      - name: usernode_api
+        group: destinations
+        properties:
+          name: usernode_api
+          url: '~{url}'
+          forwardAuthToken: true
+  - name: PriceGrid_MTA_ui_deployer
+    type: com.sap.html5.application-content
+    path: PriceGrid_MTA_ui_deployer
+    requires:
+      - name: PriceGrid_MTA_html5_repo_host
+    build-parameters:
+      requires:
+        - name: pricegrid
+          artifacts:
+            - './*'
+          target-path: resources/pricegrid
+  - name: pricegrid
+    type: html5
+    path: pricegrid
+    build-parameters:
+      builder: custom
+      commands:
+        - npm install
+        - npm run build
+      supported-platforms: []
+      build-result: dist
+
+  - name: usernode
+    type: nodejs
+    path: usernode
+    provides:
+     - name: usernode_api
+       properties:
+          url: ${default-url}
+    properties:
+      UAA_SERVICE_NAME: uaa_Mohawk_MTA
+    requires:
+      - name: uaa_Mohawk_MTA      
+
+resources:
+  - name: PriceGrid_MTA_html5_repo_runtime
+    parameters:
+      service-plan: app-runtime
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: PriceGrid_MTA_html5_repo_host
+    parameters:
+      service-plan: app-host
+      service: html5-apps-repo
+    type: org.cloudfoundry.managed-service
+  - name: uaa_Mohawk_MTA
+    type: org.cloudfoundry.existing-service
+  - name: dest_Mohawk_MTA
+    type: org.cloudfoundry.existing-service

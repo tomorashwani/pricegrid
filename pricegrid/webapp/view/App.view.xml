@@ -1,0 +1,51 @@
+<mvc:View controllerName="cf.pricegrid.controller.App" displayBlock="true" height="100%" xmlns="sap.m" xmlns:f="sap.f"
+	xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout">
+	<!--<Bar class="aTopBar">
+		<contentLeft>
+			<Image src="https://mohawkind.com/_images/global/logo.svg" height="3rem" width="5rem"/>
+		</contentLeft>
+		<contentMiddle>
+			<core:Icon src="sap-icon://e-learning"></core:Icon>
+			<Title text="Price Grid"/>
+		</contentMiddle>
+	</Bar>
+	<OverflowToolbar height="3rem" class="aOvrFlw">
+		<Label text="Warehouse">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low"/>
+			</layoutData>
+		</Label>
+		<Select forceSelection="true" id="wh" items="{warehouses>/}" change="onWhChange">
+			<core:Item key="{warehouses>WAREHOUSE_CODE__C}" text="{warehouses>WAREHOUSE_CODE__C}"/>
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low"/>
+			</layoutData>
+		</Select>
+		<Label text="Product Category">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low"/>
+			</layoutData>
+		</Label>
+		<Select forceSelection="true" id="prodCat" selectedKey="" items="{local>/ProductCategory}" change="onCategoryChange">
+			<core:Item key="{local>key}" text="{local>name}"/>
+			<layoutData>
+				<OverflowToolbarLayoutData priority="Low"/>
+			</layoutData>
+		</Select>
+		<ToolbarSpacer/>
+		<Button id="filterButton" press="onFilter" icon="sap-icon://filter" >
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+		<Button text="Reset" type="Reject" class="aResetBtn">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="High"/>
+			</layoutData>
+		</Button>
+	</OverflowToolbar>-->
+	<App id="app" >
+		<f:FlexibleColumnLayout id="layout" layout="{appView>/layout}" backgroundDesign="Translucent"></f:FlexibleColumnLayout>
+		<!--</VBox>-->
+	</App>
+</mvc:View>
