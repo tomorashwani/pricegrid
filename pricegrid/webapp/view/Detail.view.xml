@@ -40,20 +40,26 @@
 					<IconTabFilter text="Detail">
 						<Panel id="priPanel" headerText="Primary Information" width="100%" height="auto" expanded="true" expandable="true">
 							<content>
-								<l:Grid id="primaryGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+								<l:Grid id="primaryGrid" containerQuery="true" defaultSpan="XL3 L3 M5 S12">
 								</l:Grid>
+							<!--	<l:Grid id="primaryGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+								</l:Grid>-->
 							</content>
 						</Panel>
 						<Panel headerText="Secondary Information" width="100%" height="auto" expanded="true" expandable="true">
 							<content>
-								<l:Grid id="secondaryGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+									<l:Grid id="secondaryGrid" containerQuery="true" defaultSpan="XL3 L3 M5 S12">
 								</l:Grid>
+							<!--	<l:Grid id="secondaryGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+								</l:Grid>-->
 							</content>
 						</Panel>
 						<Panel headerText="Pricing Information" width="100%" height="auto" expanded="true" expandable="true">
 							<content>
-								<l:Grid id="pricingGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+									<l:Grid id="pricingGrid" containerQuery="true" defaultSpan="XL3 L3 M5 S12">
 								</l:Grid>
+								<!--<l:Grid id="pricingGrid" containerQuery="true" defaultSpan="XL3 L4 M4 S12">
+								</l:Grid>-->
 							</content>
 						</Panel>
 					</IconTabFilter>

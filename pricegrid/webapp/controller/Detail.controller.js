@@ -185,14 +185,11 @@ sap.ui.define([
 			var that = this;
 			var pricing = allData.filter(function (a) {
 				if (that.userRole === "TM") {
-					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information" && a['ACCESS_LEVEL__C'] ===
-						"TM";
+					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information" && (a['ACCESS_LEVEL__C'] !==
+						"DM" && a['ACCESS_LEVEL__C'] !== "RVP");
 				} else if (that.userRole === "DM") {
-					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information" && (a['ACCESS_LEVEL__C'] ===
-						"TM" || a['ACCESS_LEVEL__C'] === "DM");
-				} else if (that.userRole === "RVP") {
-					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information" && (a['ACCESS_LEVEL__C'] ===
-						"TM" || a['ACCESS_LEVEL__C'] === "DM" || a['ACCESS_LEVEL__C'] === "RVP");
+					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information" && a['ACCESS_LEVEL__C'] !==
+						"RVP";
 				} else {
 					return a['PRODUCT_CATEGORY__C'] === selectedCat && a['MODAL_SECTION__C'] === "Pricing Information";
 				}
@@ -229,13 +226,16 @@ sap.ui.define([
 			selectedData.RVP_PRICE_CONCAT__C = "$" + (parseFloat(selectedData.RVP_ROLL_PRICE__C)).toFixed(2) + " / $" + (parseFloat(
 				selectedData.RVP_CUT_PRICE__C)).toFixed(2);
 
+			primary.sort(function (a, b) {
+				return parseFloat(b.MODAL_PRIMARY_SORT_ORDER__C) - parseFloat(a.MODAL_PRIMARY_SORT_ORDER__C);
+			});
 			var pGrid = this.getView().byId("primaryGrid");
 			pGrid.removeAllContent();
 			for (var p = 0; p < primary.length; p++) {
 				var field = primary[p]['FIELD_API_NAME__C'].toUpperCase();
 				field = field.includes("PRODUCT__R.") ? field.replace("PRODUCT__R.", "") : field;
 				// field = field.includes("_CONCAT_") ? field.replace("_CONCAT_", "_NUM_") : field;
-				if (primary[p].SHORT_LABEL__C === "Stock") {
+				if (primary[p].SHORT_LABEL__C === "Local Stock") {
 					var p1ObjAttr = new sap.m.HBox();
 					var stLbl = new sap.m.Label({
 						text: primary[p].SHORT_LABEL__C + ":"
@@ -261,6 +261,10 @@ sap.ui.define([
 				}
 				pGrid.insertContent(p1ObjAttr);
 			}
+			
+				secondary.sort(function (a, b) {
+				return parseFloat(b.MODAL_SECONDARY_SORT_ORDER__C) - parseFloat(a.MODAL_SECONDARY_SORT_ORDER__C);
+			});
 
 			var sGrid = this.getView().byId("secondaryGrid");
 			sGrid.removeAllContent();
@@ -274,15 +278,30 @@ sap.ui.define([
 				sGrid.insertContent(sObjAttr);
 			}
 
+			pricing.sort(function (a, b) {
+				return parseFloat(b.MODAL_PRIMARY_SORT_ORDER__C) - parseFloat(a.MODAL_PRIMARY_SORT_ORDER__C);
+			});
 			var tGrid = this.getView().byId("pricingGrid");
 			tGrid.removeAllContent();
 			for (var p = 0; p < pricing.length; p++) {
 				var field = pricing[p]['FIELD_API_NAME__C'].toUpperCase();
 				field = field.includes("PRODUCT__R.") ? field.replace("PRODUCT__R.", "") : field;
-				var tObjAttr = new sap.m.ObjectAttribute({
+				if (selectedCat === "Residential Broadloom" || selectedCat === "Commercial Broadloom" || selectedCat === "Resilient Sheet") {
+					var tObjAttr = new sap.m.ObjectAttribute({
+						title: pricing[p]['SHORT_LABEL__C'],
+						text: selectedData[field]
+					});
+				} else {
+					var tObjAttr = new sap.m.ObjectAttribute({
+						title: pricing[p]['SHORT_LABEL__C'],
+						text: "$" + selectedData[field]
+					});
+				}
+
+				/*var tObjAttr = new sap.m.ObjectAttribute({
 					title: pricing[p]['SHORT_LABEL__C'],
 					text: selectedData[field]
-				});
+				});*/
 				tGrid.insertContent(tObjAttr);
 			}
 

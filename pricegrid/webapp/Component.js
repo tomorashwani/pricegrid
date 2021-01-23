@@ -29,6 +29,8 @@ sap.ui.define([
 
 			// set the device model
 			this.setModel(models.createDeviceModel(), "device");
+			sap.ui.getCore().busyIndicator = new sap.m.BusyDialog();
+			 sap.ui.getCore().busyIndicator.open();
 		},
 
 		/**

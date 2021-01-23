@@ -70,7 +70,7 @@ sap.ui.define([
 					"name": "Residential Broadloom"
 				}, {
 					"key": "Resilient Tile",
-					"name": "Resilient Tile"
+					"name": "Resilient Tile & Plank"
 				}, {
 					"key": "RevWood",
 					"name": "RevWood"
@@ -129,8 +129,11 @@ sap.ui.define([
 					that.gridmeta.sort(that.sortGridMeta);
 					var oModel = new JSONModel(that.gridmeta);
 					sap.ui.getCore().setModel(oModel, "configModel");
+					sap.ui.getCore().busyIndicator.close();
 				},
-				error: function (error) {}
+				error: function (error) {
+					sap.ui.getCore().busyIndicator.close();
+				}
 			});
 
 			// Get Account Number
@@ -145,6 +148,7 @@ sap.ui.define([
 				whURL = "pricing/PriceGrid.xsodata/Account?$filter=ACCOUNT__C eq '" + accNo + "'";
 			}
 
+			sap.ui.getCore().busyIndicator.open();
 			$.ajax({
 				// url: "pricing/PriceGrid.xsodata/Warehouse",
 				url: whURL,
@@ -197,13 +201,15 @@ sap.ui.define([
 						that.byId("wh2").setSelectedKey(that.warehouses[0].WAREHOUSE_CODE__C);
 					}
 					// that.selectedWH = response.d.results[0].WAREHOUSE_CODE__C;
-
+					sap.ui.getCore().busyIndicator.close();
 				},
 				error: function (error) {
 					that.warehouses = false;
+					sap.ui.getCore().busyIndicator.close();
 				}
 			});
 
+			sap.ui.getCore().busyIndicator.open();
 			$.ajax({
 				url: "pricing/PriceGrid.xsodata/Brand",
 				contentType: "application/json",
@@ -249,8 +255,11 @@ sap.ui.define([
 
 					that.getView().byId("masterPage2").setVisible(false);
 					that.getView().byId("masterPage").setVisible(true);
+					sap.ui.getCore().busyIndicator.close();
 				},
-				error: function (error) {}
+				error: function (error) {
+					sap.ui.getCore().busyIndicator.close();
+				}
 			});
 
 		},
@@ -258,29 +267,32 @@ sap.ui.define([
 		onAfterRendering: function (oEvent) {
 			// this.selectedCat = document.getElementById('container-pricegrid---App--prodCat-labelText').innerHTML;
 			var that = this;
+			sap.ui.getCore().busyIndicator.open();
 			$.ajax({
 				url: "../user"
 			}).done(function (data, status, jqxhr) {
 				console.log(data);
 				that.loggedInUser = data;
+				$.ajax({
+					url: "pricing/PriceGrid.xsodata/UserRole?$filter=EMAILID eq '" + data + "'",
+					contentType: "application/json",
+					type: 'GET',
+					dataType: "json",
+					async: false,
+					success: function (response) {
+						if (response.d.results.length > 0) {
+							that.userRole = response.d.results[0].ROLE;
+						}
+						sap.ui.getCore().getModel("configModel").setProperty("/userRole", that.userRole);
+						sap.ui.getCore().busyIndicator.close();
+					},
+					error: function (error) {
+						sap.ui.getCore().busyIndicator.close();
+					}
+				});
 			});
 
 			// this.loggedInUser = "Saradha_Varadharajan@mohawkind.com";
-
-			$.ajax({
-				url: "pricing/PriceGrid.xsodata/UserRole?$filter=EMAILID eq '" + this.loggedInUser + "'",
-				contentType: "application/json",
-				type: 'GET',
-				dataType: "json",
-				async: false,
-				success: function (response) {
-					if (response.d.results.length > 0) {
-						that.userRole = response.d.results[0].ROLE;
-					}
-					sap.ui.getCore().getModel("configModel").setProperty("/userRole", that.userRole);
-				},
-				error: function (error) {}
-			});
 
 			$("#container-pricegrid---master--list").on('scroll', {
 				that: this
@@ -540,7 +552,7 @@ sap.ui.define([
 						"' and WAREHOUSE_CODE__C eq '" +
 						this.selectedWH + "' " + urlBrand + ")&$skip=" + this.fetchSkip + "&$top=" + this.fetchTotal + "&$format=json";
 				}
-
+				sap.ui.getCore().busyIndicator.open();
 				if (this.selectedWH !== undefined & this.selectedWH !== '---') {
 					$.ajax({
 						url: url,
@@ -574,20 +586,36 @@ sap.ui.define([
 
 							}
 
-							// sort by name
-							pViewData.sort(function (a, b) {
-								var nameA = a.NAME.toUpperCase(); // ignore upper and lowercase
-								var nameB = b.NAME.toUpperCase(); // ignore upper and lowercase
-								if (nameA < nameB) {
-									return -1;
-								}
-								if (nameA > nameB) {
-									return 1;
-								}
+							if (that.selectedCat === "Cushion") {
+								pViewData.sort(function (a, b) {
+									var nameA = a.INVENTORY_STYLE_NAME__C.toUpperCase(); // ignore upper and lowercase
+									var nameB = b.INVENTORY_STYLE_NAME__C.toUpperCase(); // ignore upper and lowercase
+									if (nameA < nameB) {
+										return -1;
+									}
+									if (nameA > nameB) {
+										return 1;
+									}
 
-								// names must be equal
-								return 0;
-							});
+									// names must be equal
+									return 0;
+								});
+							} else {
+								// sort by name
+								pViewData.sort(function (a, b) {
+									var nameA = a.NAME.toUpperCase(); // ignore upper and lowercase
+									var nameB = b.NAME.toUpperCase(); // ignore upper and lowercase
+									if (nameA < nameB) {
+										return -1;
+									}
+									if (nameA > nameB) {
+										return 1;
+									}
+
+									// names must be equal
+									return 0;
+								});
+							}
 							//var pViewData = pViewModel.getData();
 							pViewModel.setData(pViewData);
 							// that._bindFilters(pViewData, pViewModel);
@@ -598,11 +626,13 @@ sap.ui.define([
 							that.bindRecords();
 							that.getView().byId("sortButton").setEnabled(true);
 							that.getView().byId("sortButton2").setEnabled(true);
+							sap.ui.getCore().busyIndicator.close();
 						},
 						error: function (error) {
 							console.log(error);
 							that.getView().byId("sortButton").setEnabled(false);
 							that.getView().byId("sortButton2").setEnabled(false);
+							sap.ui.getCore().busyIndicator.close();
 							//sap.m.MessageToast.show("Error");
 							//return false;
 						}
@@ -629,7 +659,7 @@ sap.ui.define([
 				});
 				oTable.addColumn(oColumn);
 				// for Stock checkbox
-				if (this.primaryCols[i]['SHORT_LABEL__C'] === "Stock") {
+				if (this.primaryCols[i]['SHORT_LABEL__C'] === "Local Stock") {
 					var tData = {
 						"key": this.primaryCols[i].PRIMARY_DISPLAY_ORDER__C,
 						"header": this.primaryCols[i].SHORT_LABEL__C,
@@ -1446,7 +1476,7 @@ sap.ui.define([
 			}
 
 			this.globalSearchField = urlFilter;*/
-
+			sap.ui.getCore().busyIndicator.open();
 			// var url = "pricing/PriceGrid.xsodata/ProductView?$filter=" + urlFilter + "&$format=json";
 			var url = "pricing/GBSProductview.xsjs?globalsearchKey=" + sQuery + "&Gridtype=MBP&$format=json";
 
@@ -1635,11 +1665,13 @@ sap.ui.define([
 						oTable.removeAllColumns();
 
 						oTable2.removeAllItems();
+						sap.ui.getCore().busyIndicator.close();
 
 						// that.bindRecords();
 					},
 					error: function (error) {
 						console.log(error);
+						sap.ui.getCore().busyIndicator.close();
 						//sap.m.MessageToast.show("Error");
 						//return false;
 					}
@@ -1725,29 +1757,69 @@ sap.ui.define([
 		 * @public
 		 */
 		onSortDialogForPhone: function (oEvent) {
+
 			var sDialogTab = "sort";
+
+			var headerData = sap.ui.getCore().getModel("configModel").getProperty("/mHeader");
 			var oList2 = this.getView().byId("list2");
+			var oModelCat = sap.ui.getCore().getModel("configModel");
 
 			// load asynchronous XML fragment
 			if (!this.sortDialog) {
 				this.sortDialog = sap.ui.xmlfragment("cf.pricegrid.view.ViewSettingsDialog", this);
 				this.getView().addDependent(this.sortDialog);
 
-				var items = [{
-						"key": "number",
-						"text": "Mstr #"
-					}, {
-						"key": "title",
-						"text": "Master Style"
-					}, {
-						"key": "intro",
-						"text": "Sell #"
-					}, {
-						"key": "numUnit",
-						"text": "Selling Style"
-					}
+				if (this.selectedCat === "Residential Broadloom" || this.selectedCat === "Resilient Tile" || this.selectedCat === "Carpet Tile" ||
+					this.selectedCat === "Commercial Broadloom" || this.selectedCat === "Resilient Sheet") {
+					var items = [{
+							"key": "number",
+							"text": "Mstr #"
+						}, {
+							"key": "title",
+							"text": "Master Style"
+						}, {
+							"key": "intro",
+							"text": "Sell #"
+						}, {
+							"key": "numUnit",
+							"text": "Selling Style"
+						}
 
-				]
+					]
+				} else if (this.selectedCat === "RevWood" || this.selectedCat === "TecWood" || this.selectedCat === "Solid Wood" ||
+					this.selectedCat === "Tile" || this.selectedCat === "Accessories") {
+					var items = [{
+							"key": "number",
+							"text": "Inv #"
+						}, {
+							"key": "title",
+							"text": "Inventory Style"
+						}, {
+							"key": "intro",
+							"text": "Sell #"
+						}, {
+							"key": "numUnit",
+							"text": "Selling Style"
+						}
+
+					]
+				} else if (this.selectedCat === "Cushion") {
+					var items = [{
+							"key": "intro",
+							"text": "Inv #"
+						}, {
+							"key": "title",
+							"text": "Inventory Style"
+						}, {
+							"key": "number",
+							"text": "Den"
+						}, {
+							"key": "numUnit",
+							"text": "Ga"
+						}
+
+					]
+				}
 
 				for (var i = 0; i < items.length; i++) {
 					var oCustomSortItem = new sap.m.ViewSettingsItem({
@@ -1759,7 +1831,7 @@ sap.ui.define([
 			}
 			this.sortDialog.open();
 		},
-		
+
 		onSortDialog: function (oEvent) {
 			var sDialogTab = "sort";
 

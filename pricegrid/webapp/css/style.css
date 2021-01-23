@@ -5,11 +5,11 @@ div#container-pricegrid---master--masterPage-pageTitle-left-inner {
 .sapFDynamicPageTitleHeading-CTX.sapFDynamicPageTitleMainHeadingInner , .sapFDynamicPageTitleMainHeading{
     width: 100%;
 }
-#container-pricegrid---master--list{
+/*#container-pricegrid---master--list{*/
 	/*height:500px;*/
-	height: 100%;
-	overflow:auto;
-}
+/*	height: 100%;*/
+/*	overflow:auto;*/
+/*}*/
 .checkboxCls .sapMCbBg{
 	top: 0rem !important;
 }
@@ -17,3 +17,7 @@ div#container-pricegrid---master--masterPage-pageTitle-left-inner {
 /*.sapUiInvisibleText, .sapUiHiddenPlaceholder { 
 	display: block !important;
 }*/
+
+.desktopTblCls .sapMListTbl {
+	table-layout: auto !important;
+}

@@ -92,7 +92,7 @@
 			</VBox>
 		</semantic:titleHeading>
 		<semantic:content>
-			<Table id="list" inset="false" growing="true" growingThreshold="100" growingScrollToLoad="true" alternateRowColors="true" visible="true"></Table>
+			<Table id="list" inset="false" growing="true" growingThreshold="100" growingScrollToLoad="true" alternateRowColors="true" visible="true" class="desktopTblCls"></Table>
 		</semantic:content>
 	</semantic:SemanticPage>
 	<semantic:SemanticPage id="masterPage2" preserveHeaderStateOnScroll="false" toggleHeaderOnTitleClick="false" class="masterSemanticTop"
